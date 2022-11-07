@@ -1,13 +1,5 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-	addProduct,
-	setProductInfo,
-	deleteProduct,
-	deleteSelectedProducts
-} from '../redux/features/productSlice';
 import styles from '../styles/Home.module.css';
 
 export default function Home() {

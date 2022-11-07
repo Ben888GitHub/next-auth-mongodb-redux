@@ -1,46 +1,33 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+	getProducts,
+	addNewProduct,
+	deleteSingleProduct
+} from '../../api-functions';
 
 const initialState = {
 	products: [],
 	productInfo: {
+		id: '',
 		title: '',
-		content: ''
+		content: '',
+		image: ''
 	}
 	// todo, put title, content, image, loading state to the component
 };
 export const getProductsAsync = createAsyncThunk(
 	'data/getProductsAsync',
-	async () => {
-		const res = await fetch(
-			'https://next-auth-mongodb-redux-usages.vercel.app/api/products',
-			{
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		);
-		const allProducts = await res.json();
-		console.log(allProducts.data);
-		return allProducts.data;
-	}
+	async () => await getProducts()
 );
 
 export const addProductAsync = createAsyncThunk(
 	'data/addProductAsync',
-	async (payload) => {
-		console.log(payload);
-		const res = await fetch(
-			'https://next-auth-mongodb-redux-usages.vercel.app/api/products',
-			{
-				method: 'POST',
-				body: JSON.stringify(payload)
-			}
-		);
-		const newProduct = await res.json();
-		console.log(newProduct);
-		return payload;
-	}
+	async (payload) => await addNewProduct(payload)
+);
+
+export const deleteProductAsync = createAsyncThunk(
+	'data/deleteProductAsync',
+	async (payload) => await deleteSingleProduct(payload)
 );
 export const productSlice = createSlice({
 	name: 'products',
@@ -49,21 +36,18 @@ export const productSlice = createSlice({
 		setProductInfo: (state, action) => {
 			state.productInfo = {
 				...state.productInfo,
+				id: String(Math.random()),
 				title: action.payload.title,
 				content: action.payload.content,
+				image: action.payload.image,
 				author: {
 					email: 'sample@email'
 				}
 			};
 		},
-		deleteProduct: (state, action) => {
-			state.products = state.products.filter(
-				(product) => product._id !== action.payload
-			);
-		},
 		deleteSelectedProducts: (state, action) => {
 			state.products = state.products.filter(
-				(product) => !action.payload.includes(product._id)
+				(product) => !action.payload.includes(product.id)
 			);
 		},
 		updateProduct: () => {}
@@ -75,6 +59,12 @@ export const productSlice = createSlice({
 			builder.addCase(addProductAsync.fulfilled, (state, action) => {
 				console.log(action);
 				state.products = [...state.products, action.payload];
+			}),
+			builder.addCase(deleteProductAsync.fulfilled, (state, action) => {
+				console.log(action);
+				state.products = state.products.filter(
+					(product) => product.id !== action.payload
+				);
 			});
 	}
 });

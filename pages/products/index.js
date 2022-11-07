@@ -6,7 +6,8 @@ import {
 	deleteProduct,
 	deleteSelectedProducts,
 	getProductsAsync,
-	addProductAsync
+	addProductAsync,
+	deleteProductAsync
 } from '../../redux/features/productSlice';
 import styles from '../../styles/Home.module.css';
 
@@ -59,14 +60,14 @@ function Products() {
 					}
 				/>
 				<br />
-				{/* <input
+				<input
 					type="text"
 					value={productInfo.image}
 					placeholder="Image"
 					onChange={(e) =>
 						dispatch(setProductInfo({ ...productInfo, image: e.target.value }))
 					}
-				/> */}
+				/>
 				<br />
 				<button onClick={handleAddProduct}>Add Product</button>
 				<br />
@@ -79,10 +80,11 @@ function Products() {
 				<br />
 				{products.map((product, idx) => (
 					<div key={idx}>
+						<h3>{product.id}</h3>
 						<h3>{product.title}</h3>
 						<p>{product.content}</p>
-						{/* <p>{product.image}</p> */}
-						<button onClick={() => dispatch(deleteProduct(product._id))}>
+						<p>{product.image}</p>
+						<button onClick={() => dispatch(deleteProductAsync(product.id))}>
 							Delete {product.title}
 						</button>
 						<input
@@ -90,10 +92,10 @@ function Products() {
 							type="checkbox"
 							onClick={(e) => {
 								e.target.checked === true
-									? setSelectedItems([...selectedItems, product._id])
+									? setSelectedItems([...selectedItems, product.id])
 									: setSelectedItems(
 											selectedItems.filter(
-												(selectedItem) => selectedItem !== product._id
+												(selectedItem) => selectedItem !== product.id
 											)
 									  );
 							}}
