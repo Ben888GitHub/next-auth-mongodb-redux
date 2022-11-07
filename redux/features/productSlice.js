@@ -11,12 +11,15 @@ const initialState = {
 export const getProductsAsync = createAsyncThunk(
 	'data/getProductsAsync',
 	async () => {
-		const res = await fetch('http://localhost:3000/api/products', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json'
+		const res = await fetch(
+			'https://next-auth-mongodb-redux-usages.vercel.app/api/products',
+			{
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
 			}
-		});
+		);
 		const allProducts = await res.json();
 		console.log(allProducts.data);
 		return allProducts.data;
@@ -27,10 +30,13 @@ export const addProductAsync = createAsyncThunk(
 	'data/addProductAsync',
 	async (payload) => {
 		console.log(payload);
-		const res = await fetch('http://localhost:3000/api/products', {
-			method: 'POST',
-			body: JSON.stringify(payload)
-		});
+		const res = await fetch(
+			'https://next-auth-mongodb-redux-usages.vercel.app/api/products',
+			{
+				method: 'POST',
+				body: JSON.stringify(payload)
+			}
+		);
 		const newProduct = await res.json();
 		console.log(newProduct);
 		return payload;
