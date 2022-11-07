@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	addProduct,
 	setProductInfo,
 	deleteProduct,
-	deleteSelectedProducts
+	deleteSelectedProducts,
+	getProductsAsync,
+	addProductAsync
 } from '../../redux/features/productSlice';
 import styles from '../../styles/Home.module.css';
 
@@ -15,9 +17,15 @@ function Products() {
 
 	const [selectedItems, setSelectedItems] = useState([]);
 
+	useEffect(() => {
+		dispatch(getProductsAsync());
+		products && console.log(products);
+	}, []);
+
 	const handleAddProduct = () => {
 		console.log(productInfo);
-		dispatch(addProduct(productInfo));
+		// dispatch(addProduct(productInfo));
+		dispatch(addProductAsync(productInfo));
 		dispatch(setProductInfo({ title: '', content: '', image: '' }));
 	};
 
@@ -51,14 +59,14 @@ function Products() {
 					}
 				/>
 				<br />
-				<input
+				{/* <input
 					type="text"
 					value={productInfo.image}
 					placeholder="Image"
 					onChange={(e) =>
 						dispatch(setProductInfo({ ...productInfo, image: e.target.value }))
 					}
-				/>
+				/> */}
 				<br />
 				<button onClick={handleAddProduct}>Add Product</button>
 				<br />
@@ -73,8 +81,8 @@ function Products() {
 					<div key={idx}>
 						<h3>{product.title}</h3>
 						<p>{product.content}</p>
-						<p>{product.image}</p>
-						<button onClick={() => dispatch(deleteProduct(product.id))}>
+						{/* <p>{product.image}</p> */}
+						<button onClick={() => dispatch(deleteProduct(product._id))}>
 							Delete {product.title}
 						</button>
 						<input
@@ -82,10 +90,10 @@ function Products() {
 							type="checkbox"
 							onClick={(e) => {
 								e.target.checked === true
-									? setSelectedItems([...selectedItems, product.id])
+									? setSelectedItems([...selectedItems, product._id])
 									: setSelectedItems(
 											selectedItems.filter(
-												(selectedItem) => selectedItem !== product.id
+												(selectedItem) => selectedItem !== product._id
 											)
 									  );
 							}}
