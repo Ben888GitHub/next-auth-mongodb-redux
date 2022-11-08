@@ -1,5 +1,6 @@
-const getProducts = async () => {
-	const res = await fetch('http://localhost:3000/api/products', {
+const getProducts = async (payload) => {
+	console.log(payload);
+	const res = await fetch(`/api/products/${payload}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json'
@@ -10,7 +11,7 @@ const getProducts = async () => {
 };
 
 const getSingleProduct = async (payload) => {
-	const res = await fetch(`http://localhost:3000/api/product/${payload}`, {
+	const res = await fetch(`/api/product/${payload}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json'
@@ -21,7 +22,7 @@ const getSingleProduct = async (payload) => {
 };
 
 const addNewProduct = async (payload) => {
-	const res = await fetch('http://localhost:3000/api/products', {
+	const res = await fetch('/api/products', {
 		method: 'POST',
 		body: JSON.stringify(payload)
 	});
@@ -32,7 +33,7 @@ const addNewProduct = async (payload) => {
 
 const deleteSingleProduct = async (payload) => {
 	console.log(payload);
-	const res = await fetch(`http://localhost:3000/api/product/${payload}`, {
+	const res = await fetch(`/api/product/${payload}`, {
 		method: 'DELETE',
 		headers: {
 			'Content-Type': 'application/json'
@@ -45,7 +46,7 @@ const deleteSingleProduct = async (payload) => {
 
 const deleteSelectedProducts = async (payload) => {
 	console.log(payload);
-	const res = await fetch(`http://localhost:3000/api/delete-products`, {
+	const res = await fetch(`/api/delete-products`, {
 		method: 'DELETE',
 		headers: {
 			'Content-Type': 'application/json'
@@ -60,7 +61,7 @@ const deleteSelectedProducts = async (payload) => {
 const updateSingleProduct = async (payload, product) => {
 	console.log(payload);
 	console.log(_id);
-	const res = await fetch(`http://localhost:3000/api/product/${product._id}`, {
+	const res = await fetch(`/api/product/${product._id}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json'

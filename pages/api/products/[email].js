@@ -5,9 +5,10 @@ export default async function handler(req, res) {
 	const db = client.db('test');
 	const products = db.collection('products');
 
-	const { body, method } = req;
+	const { query } = req;
 
-	let bodyObject = JSON.parse(body);
-	const newProduct = await products.insertOne(bodyObject);
-	res.json({ status: 200, data: newProduct });
+	const allProducts = await products
+		.find({ author: { email: query.email } })
+		.toArray();
+	res.json({ status: 200, data: allProducts });
 }

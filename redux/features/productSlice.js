@@ -20,7 +20,7 @@ const initialState = {
 };
 export const getProductsAsync = createAsyncThunk(
 	'data/getProductsAsync',
-	async () => await getProducts()
+	async (payload) => await getProducts(payload)
 );
 
 export const getSingleProductAsync = createAsyncThunk(
@@ -57,10 +57,10 @@ export const productSlice = createSlice({
 				id: String(Math.random()),
 				title: action.payload.title,
 				content: action.payload.content,
-				image: action.payload.image,
-				author: {
-					email: 'sample@email'
-				}
+				image: action.payload.image
+				// author: {
+				// 	email: action.payload.author.email
+				// }
 			};
 		},
 		updateProduct: () => {}

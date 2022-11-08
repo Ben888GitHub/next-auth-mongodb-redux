@@ -21,15 +21,32 @@ function Products() {
 	const { data: session } = useSession();
 
 	useEffect(() => {
-		dispatch(getProductsAsync());
-		products && console.log(products);
-	}, []);
+		session && dispatch(getProductsAsync(session?.user?.email));
+	}, [session]);
 
 	const handleAddProduct = () => {
-		console.log(productInfo);
 		// dispatch(addProduct(productInfo));
-		dispatch(addProductAsync(productInfo));
-		dispatch(setProductInfo({ title: '', content: '', image: '' }));
+		// dispatch(
+		// 	setProductInfo({
+		// 		...productInfo,
+		// 		author: { email: session?.user?.email }
+		// 	})
+		// );
+		console.log(productInfo);
+		dispatch(
+			addProductAsync({
+				...productInfo,
+				author: { email: session?.user?.email }
+			})
+		);
+		dispatch(
+			setProductInfo({
+				title: '',
+				content: '',
+				image: '',
+				author: { email: '' }
+			})
+		);
 	};
 
 	const handleDeleteSelected = () => {
