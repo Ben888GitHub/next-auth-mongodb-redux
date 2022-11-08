@@ -2,7 +2,10 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
 	getProducts,
 	addNewProduct,
-	deleteSingleProduct
+	deleteSingleProduct,
+	deleteSelectedProducts,
+	getSingleProduct,
+	updateSingleProduct
 } from '../../api-functions';
 
 const initialState = {
@@ -12,12 +15,17 @@ const initialState = {
 		title: '',
 		content: '',
 		image: ''
-	}
-	// todo, put title, content, image, loading state to the component
+	},
+	product: {}
 };
 export const getProductsAsync = createAsyncThunk(
 	'data/getProductsAsync',
 	async () => await getProducts()
+);
+
+export const getSingleProductAsync = createAsyncThunk(
+	'data/getSingleProductAsync',
+	async (payload) => await getSingleProduct(payload)
 );
 
 export const addProductAsync = createAsyncThunk(
@@ -29,6 +37,16 @@ export const deleteProductAsync = createAsyncThunk(
 	'data/deleteProductAsync',
 	async (payload) => await deleteSingleProduct(payload)
 );
+
+export const deleteSelectedProductsAsync = createAsyncThunk(
+	'data/deleteSelectedProductsAsync',
+	async (payload) => await deleteSelectedProducts(payload)
+);
+export const updateSingleProductsAsync = createAsyncThunk(
+	'data/updateSingleProductsAsync',
+	async (payload, product) => await updateSingleProduct(payload, product)
+);
+
 export const productSlice = createSlice({
 	name: 'products',
 	initialState,
@@ -45,34 +63,34 @@ export const productSlice = createSlice({
 				}
 			};
 		},
-		deleteSelectedProducts: (state, action) => {
-			state.products = state.products.filter(
-				(product) => !action.payload.includes(product.id)
-			);
-		},
 		updateProduct: () => {}
 	},
 	extraReducers: (builder) => {
 		builder.addCase(getProductsAsync.fulfilled, (state, action) => {
 			state.products = action.payload;
 		}),
-			builder.addCase(addProductAsync.fulfilled, (state, action) => {
-				console.log(action);
-				state.products = [...state.products, action.payload];
-			}),
+			builder.addCase(getSingleProductAsync.fulfilled, (state, action) => {
+				state.product = action.payload;
+			});
+		builder.addCase(addProductAsync.fulfilled, (state, action) => {
+			console.log(action);
+			state.products = [...state.products, action.payload];
+		}),
 			builder.addCase(deleteProductAsync.fulfilled, (state, action) => {
 				console.log(action);
 				state.products = state.products.filter(
 					(product) => product.id !== action.payload
 				);
-			});
+			}),
+			builder.addCase(
+				deleteSelectedProductsAsync.fulfilled,
+				(state, action) => {
+					console.log(action);
+					state.products = state.products.filter(
+						(product) => !action.payload.includes(product.id)
+					);
+				}
+			);
 	}
 });
-
-// todo, import this state in the component with useSelector()
-export const {
-	addProduct,
-	setProductInfo,
-	deleteProduct,
-	deleteSelectedProducts
-} = productSlice.actions;
+export const { setProductInfo } = productSlice.actions;

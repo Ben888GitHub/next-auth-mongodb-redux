@@ -1,15 +1,15 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	addProduct,
 	setProductInfo,
-	deleteProduct,
-	deleteSelectedProducts,
+	deleteSelectedProductsAsync,
 	getProductsAsync,
 	addProductAsync,
 	deleteProductAsync
 } from '../../redux/features/productSlice';
 import styles from '../../styles/Home.module.css';
+import { useSession, getSession, signOut } from 'next-auth/react';
 
 function Products() {
 	const dispatch = useDispatch();
@@ -17,6 +17,8 @@ function Products() {
 	const productInfo = useSelector((state) => state.products.productInfo);
 
 	const [selectedItems, setSelectedItems] = useState([]);
+
+	const { data: session } = useSession();
 
 	useEffect(() => {
 		dispatch(getProductsAsync());
@@ -31,14 +33,17 @@ function Products() {
 	};
 
 	const handleDeleteSelected = () => {
-		dispatch(deleteSelectedProducts(selectedItems));
+		dispatch(deleteSelectedProductsAsync(selectedItems));
 		setSelectedItems([]);
 	};
+
+	// console.log(session);
 
 	return (
 		<div className={styles.container}>
 			<main className={styles.main}>
-				<h1>Hello</h1>
+				<h1>Hello, {session?.user?.email}</h1>
+				<button onClick={() => signOut({ callbackUrl: '/' })}>Log out</button>
 				<br />
 				<input
 					type="text"
@@ -80,10 +85,14 @@ function Products() {
 				<br />
 				{products.map((product, idx) => (
 					<div key={idx}>
-						<h3>{product.id}</h3>
-						<h3>{product.title}</h3>
-						<p>{product.content}</p>
-						<p>{product.image}</p>
+						<Link href={`/products/${product.id}`}>
+							<a>
+								<h3>{product.id}</h3>
+								<h3>{product.title}</h3>
+								<p>{product.content}</p>
+								<p>{product.image}</p>
+							</a>
+						</Link>
 						<button onClick={() => dispatch(deleteProductAsync(product.id))}>
 							Delete {product.title}
 						</button>
@@ -110,3 +119,29 @@ function Products() {
 }
 
 export default Products;
+
+export const getServerSideProps = async (context) => {
+	const { req } = context;
+	const session = await getSession({ req });
+
+	if (!session) {
+		return {
+			redirect: { destination: '/auth/signin' }
+		};
+	}
+
+	// const res = await fetch(
+	// 	`https://next-auth-mongodb-usages.vercel.app/api/products/${session?.user?.email}`,
+	// 	{
+	// 		method: 'GET',
+	// 		headers: {
+	// 			'Content-Type': 'application/json'
+	// 		}
+	// 	}
+	// );
+	// const allProducts = await res.json();
+
+	return {
+		props: { word: 'hello' }
+	};
+};

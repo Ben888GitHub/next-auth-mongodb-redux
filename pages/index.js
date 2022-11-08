@@ -1,9 +1,13 @@
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 
 export default function Home() {
-	// console.log(selectedItems);
+	const { data: session } = useSession();
+
+	// console.log(session);
 
 	return (
 		<div className={styles.container}>
@@ -15,6 +19,17 @@ export default function Home() {
 
 			<main className={styles.main}>
 				<h1>NextAuth + MongoDB + ReduxToolkit</h1>
+				<br />
+				{!session && (
+					<Link href="/auth/signin">
+						<button
+
+						// onClick={() => signIn()}
+						>
+							Sign in
+						</button>
+					</Link>
+				)}
 			</main>
 		</div>
 	);
